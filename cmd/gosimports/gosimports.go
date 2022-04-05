@@ -34,6 +34,9 @@ var (
 
 	verbose bool // verbose logging
 
+	version string = "master" // populated by goreleaser
+	versionFlag bool // Print version
+
 	cpuProfile     = flag.String("cpuprofile", "", "CPU profile output")
 	memProfile     = flag.String("memprofile", "", "memory profile output")
 	memProfileRate = flag.Int("memrate", 0, "if > 0, sets runtime.MemProfileRate")
@@ -212,6 +215,7 @@ func main() {
 // It's a var so that custom implementations can replace it in other files.
 var parseFlags = func() []string {
 	flag.BoolVar(&verbose, "v", false, "verbose logging")
+	flag.BoolVar(&versionFlag, "version", false, "print version")
 
 	flag.Parse()
 	return flag.Args()
@@ -259,6 +263,10 @@ func gofmtMain() {
 		}()
 	}
 
+	if versionFlag {
+		fmt.Println(version)
+		return
+	}
 	if verbose {
 		log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 		options.Env.Logf = log.Printf
